@@ -1,0 +1,88 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 50px;
+}
+
+.top-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.categories-container {
+  display: flex;
+  height: 100vh;
+  /* overflow-y: auto; */
+}
+
+#bookmarksContainer {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.category {
+  margin-right: 10px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.bookmark-list {
+  list-style-type: none;
+  padding: 20px;
+  border: 1px solid black;
+  max-height: 150px;
+  min-height: 150px;
+  overflow-y: auto;
+  background-color: rgb(195, 195, 195);
+}
+
+.bookmark-item {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bookmark-title {
+  font-weight: bold;
+}
+
+.bookmark-url {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+.details-section {
+  margin-left: 20px;
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.details-container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border: 1px solid black;
+  width: 50%;
+}
+
+.details-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.details-content {
+  margin-top: 5px;
+}
+
+.hidden {
+  display: none;
+}

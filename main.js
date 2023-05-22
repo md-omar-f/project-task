@@ -1,126 +1,80 @@
-// Select the save button
-var button = document.querySelector(".save_button");
-
-// Select the input box
-var siteName = document.querySelector("[name='site_name']");
-var url = document.querySelector("[name='url']");
-var category = document.querySelector("[name='category-new']")
-
-// Select the <div> with class="bookmarks"
-var bookmarksSection = document.querySelector(".bookmarks");
-
-// Hold bookmarks in local storage
-if(typeof(localStorage.bookmark) == "undefined"){
-localStorage.bookmark = "";
-}
-
-
-// listen for form submit
-
-button.addEventListener("click", function(e){
-
-    // Prevent the page from reloading when submitting the form
-    e.preventDefault();
+    // Get bookmarks from local storage
+    var bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
     
-    let patterURL = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-    
-    let arrayItems, check = false, adr, itemAdr;
-        
-    // Validation of form and URL
-    
-    if(siteName.value === ""){
-        alert("you must fill the siteName input");
-    } else if(url.value === ""){
-        alert("you must fill the url input");
-    } else if(!patterURL.test(url.value)){
-        alert("you must enter a valid url");
-    } else{
-        
-        arrayItems = localStorage.bookmark.split(";");
-        adr = url.value;
-        adr = adr.replace(/http:\/\/|https:\/\//i, "");
-        arrayItems.length--;
-            
-        // Check if website is already bookmarked
-        for(item of arrayItems){
-            itemAdr = item.split(',')[1].replace(/http:\/\/|https:\/\//i,"");
-            if(itemAdr == adr){
-            check = true;
-            }
-        }
-            
-        if(check == true){
-            alert("This website is already bookmarked");
-        }
-        else{
-            
-            // If all checks are correct,add bookmark to local storage
-            localStorage.bookmark += `${siteName.value},${url.value};`;
-            addBookmark(siteName.value, url.value, category.value);
-            siteName.value = "";
-            url.value = "";
-            category.value="";
-        }
-    }
+    // Group bookmarks by category
+    var groupedBookmarks = {};
+    bookmarks.forEach(function(bookmark) {
+      if (!groupedBookmarks[bookmark.category]) {
+        groupedBookmarks[bookmark.category] = [];
+      }
+      groupedBookmarks[bookmark.category].push(bookmark);
     });
-
     
-    // Function to add the bookmark
-
-function addBookmark(name, url, cat){
-    let dataLink = url;
-    
-    // After obtaining a bookmark, we display it in a div and add
-    // a button to visit the link or to delete it
-    if(!url.includes("http")){
-        url = "//" + url;
-    }
-    let item = `<div class="bookmark">
-                <span>${name}</span>
-                <a class="visit" href="${url}" target="_blank"
-                    data-link='${dataLink}'>Visit</a>
-                </div>`;
-    bookmarksSection.innerHTML += item;
-    }
-
-    
-    // function to render the saved bookmarks
-
-(function fetchBoookmark(){
-    if(typeof(localStorage.bookmark) != "undefined" && localStorage.bookmark !== ""){
-        let arrayItems = localStorage.bookmark.split(";");
-        arrayItems.length--;
-        for(item of arrayItems){
-        let itemSpli = item.split(',');
-        addBookmark(itemSpli[0], itemSpli[1]);
-        }
-    }
-    })();
-
-    
-    // Function to remove the bookmark
-
-function removeBookmark(thisItem){
-    let arrayItems = [],
-        index,
-        item = thisItem.parentNode,
-        itemURL = item.querySelector(".visit").dataset.link,
-        itemName = item.querySelector("span").innerHTML;
-    arrayItems = localStorage.bookmark.split(";");
+    // Create HTML markup for categorized bookmarks
+    var bookmarksContainer = document.getElementById("bookmarksContainer");
+    for (var category in groupedBookmarks) {
+      var categoryDiv = document.createElement("div");
+      categoryDiv.classList.add("category");
+      
+      var categoryHeading = document.createElement("h2");
+      categoryHeading.textContent = category;
+      categoryDiv.appendChild(categoryHeading);
+      
+      var bookmarkList = document.createElement("ul");
+      bookmarkList.classList.add("bookmark-list");
+      
+      groupedBookmarks[category].forEach(function(bookmark) {
+        var bookmarkItem = document.createElement("li");
+        bookmarkItem.classList.add("bookmark-item");
         
-    for(i in arrayItems){
-        if(arrayItems[i] == `${itemName},${itemURL}`){
-        index = i;
-        break;
-        }
-    }
+        var bookmarkTitle = document.createElement("span");
+        bookmarkTitle.classList.add("bookmark-title");
+        bookmarkTitle.textContent = bookmark.title;
         
-    //update the localStorage
-    index = arrayItems.indexOf(`${itemName},${itemURL}`);
-    arrayItems.splice(index,1);
-    localStorage.bookmark = arrayItems.join(";");
+        var bookmarkUrl = document.createElement("a");
+        bookmarkUrl.classList.add("bookmark-url");
+        bookmarkUrl.href = bookmark.webAddress;
+        bookmarkUrl.textContent = bookmark.webAddress;
         
-    //update the bookmark Section
-    bookmarksSection.removeChild(item);
+        var viewDetailsBtn = document.createElement("button");
+        viewDetailsBtn.textContent = "Details";
+        viewDetailsBtn.addEventListener("click", function() {
+          showBookmarkDetails(bookmark);
+        });
+        
+        bookmarkItem.appendChild(bookmarkTitle);
+        //bookmarkItem.appendChild(document.createTextNode(" - "));
+        //bookmarkItem.appendChild(bookmarkUrl);
+        bookmarkItem.appendChild(viewDetailsBtn);
+        
+        bookmarkList.appendChild(bookmarkItem);
+      });
+      
+      categoryDiv.appendChild(bookmarkList);
+      
+      bookmarksContainer.appendChild(categoryDiv);
     }
     
+    // Show bookmark details
+    function showBookmarkDetails(bookmark) {
+      var detailsContainer = document.getElementById("detailsContainer");
+      var detailsContent = document.getElementById("detailsContent");
+      
+      detailsContent.innerHTML = "";
+      detailsContent.appendChild(createDetailElement("Title", bookmark.title));
+      detailsContent.appendChild(createDetailElement("Web Address", bookmark.webAddress));
+      detailsContent.appendChild(createDetailElement("Category", bookmark.category));
+      
+      detailsContainer.classList.remove("hidden");
+    }
+    
+    // Create a detail element for displaying bookmark details
+    function createDetailElement(label, value) {
+      var detailElement = document.createElement("div");
+      detailElement.innerHTML = "<strong>" + label + ":</strong> " + value;
+      return detailElement;
+    }
+
+    function openPopup() {
+      window.open('save-bookmark.html', '_blank', 'width=1000,height=500');
+    }

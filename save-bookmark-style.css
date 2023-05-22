@@ -1,0 +1,62 @@
+    body {
+      font-family: Arial, sans-serif;
+      padding: 0px;
+      margin: 0px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+        background-color: rgb(224, 224, 224);
+        width: 25%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 20px;
+    }
+  
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+  
+    select,
+    input[type="text"] {
+      width: 200px;
+      padding: 5px;
+    }
+  
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .add-category {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .add-category button {
+        margin-right: auto;
+        margin-left: 5px;
+    }
+
+    .error {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .cancel-save {
+        margin-top: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
